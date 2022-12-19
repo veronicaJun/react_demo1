@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- test 容器 -->
+    <div id="test"></div>
+    <!-- 
+        babel: ES6->ES5; JSX->JS
+        react: 核心库
+        react-dom: 扩展库
+     -->
+    <script src="../js/react.development.js"></script>
+    <script src="../js/react-dom.development.js"></script>
+    <script src="../js//babel.min.js"></script>
+
+    <!-- script type 默认是 js, 这里必须写 babel -->
+    <!-- 不可用于生产环境, 因为浏览器翻译 babel 会很慢,会白屏 -->
+    <script type="text/babel">
+        /*
+            todo:
+                1. 保存时自动格式化: 缩进,封号等
+                2. 快捷输入
+                3. 模块化/组件化/工程化
+
+            ## (js)模块
+                1. 理解:向外提供特定功能的 js 程序, 一般就是一个 js 文件
+                2. 为什么要拆成模块:随着业务逻辑增加，代码越来越多且复杂。
+                3. 作用:复用 js, 简化 js 的编写, 提高 js 运行效率
+
+            ## 组件
+                1. 理解:用来实现局部功能效果的代码和资源的集合(html/css/js/image 等等)
+                2. 为什么要用组件: 一个界面的功能更复杂
+                3. 作用:复用编码, 简化项目编码, 提高运行效率
+        */
+
+
+        /*
+            ## 创建组件
+
+            //方式一:函数式组件(适用于简单组件[无状态组件])
+            function Demo() {
+                //babel 翻译后,开启严格模式,这里的 this 不指向 window, 而是 undefined
+                return <h1>{'函数式组件'}</h1>
+            } 
+            ReactDOM.render(<Demo/>, document.getElementById("test"))//必须写 Demo 标签,且必须大驼峰
+
+            //方式二:类组件(适用于复杂组件[有状态组件])
+        */
+            class MyComponent extends React.Component {
+                /*
+                    标准写法
+                    constructor(props){//todo 有办法可以不写
+                        super(props)
+                        this.state = {
+                            isHot: false
+                        }
+                        this.onClick = this.onClick.bind(this);//todo 有工具可以帮忙处理
+                    }
+                */
+                // 简写方式
+                state = {
+                    isHot: false
+                }
+                onClick=()=>{
+                    /* 箭头函数将 this 指向了实列对象
+                        onClick(){}类中的方法开启了局部严格模式,this 丢失
+                        (错误写法)this.state.isHot = !this.state.isHot,页面无法更新
+                    */
+                    this.setState(
+                        {isHot: !this.state.isHot}
+                    )
+                }
+                render(){
+                    /* 原生事件 在这里小驼峰
+                        onClick={this.onClick} 这里不是通过实例去调用方法,
+                        标准写法需要在 constructor 中绑定 this
+                        或者使用箭头函数赋值
+                    */
+                    return <h1 onClick={this.onClick}>类组件 天气{this.state.isHot ? '炎热': '凉爽'}</h1>
+                }
+            }
+            ReactDOM.render(<MyComponent/>, document.getElementById("test"))
+
+        /*
+            ## 创建虚拟 dom:
+                1.虚拟 dom 是 objet类型的对象(一般对象)
+                2.虚拟 dom 属性少
+                3.虚拟 dom 最终被 react 转化为真实 dom
+
+            ### 方式一:js(不建议使用) (script type="text/javascript")
+                const VDOM = React.createElement('h1',{id:'title'},'hello, react')
+
+            ### 方式二:jsx
+                1.定义虚拟 dom 时,不要写引号
+                2.标签中的 JS 表达式要用{}
+                3.样式类名要写 className
+                4.内联样式要写成对象,属性用小驼峰 style = {{color: 'red',fontSize: '12px'}}
+                5.只能有一个跟标签
+                6.原生标签为小写,组件为大驼峰
+                7.标签必须闭合
+
+        */
+        const myid="atguigu";
+        const data=['React','Vue','Angular'];
+        const VDOM = (
+            <div id={myid}>
+                <h1>列表</h1>
+                <ul>
+                    {
+                        /* 
+                            必须写 js 表达式(有返回值)
+                            多个同类元素,必须要有唯一的 key
+                        */
+                        data.map((item,index)=><li key={index}>{item}</li>)
+                    }
+                </ul>
+            </div>
+        ) 
+
+        //渲染虚拟 dom 到页面
+        // ReactDOM.render(VDOM, document.getElementById("test"))
+    </script>
+</body>
+</html>
